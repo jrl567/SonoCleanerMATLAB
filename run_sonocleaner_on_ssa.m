@@ -58,38 +58,44 @@ end
 
 % Plot raw vs cleaned
 figure;
-plot(t, out.x_raw, 'DisplayName', 'Raw'); hold on;
-plot(t, out.x_clean, 'LineWidth', 1.2, 'DisplayName', 'Cleaned');
+hRaw = plot(t, out.x_raw, 'DisplayName', 'Raw'); hold on;
+hClean = plot(t, out.x_clean, 'LineWidth', 1.2, 'DisplayName', 'Cleaned');
 xlabel('Time (s)');
 ylabel('Distance');
 title(sprintf('SonoCleaner auto: %s', traceLabel), 'Interpreter', 'none');
-legend('Location', 'best');
+legend([hRaw, hClean], {'Raw', 'Cleaned'}, 'Location', 'best');
 grid on;
 
 % Plot derivatives and detected shift segments
 figure;
+
 subplot(3,1,1);
-plot(t, out.x_raw, 'DisplayName', 'Raw'); hold on;
-plot(t, out.x_clean, 'LineWidth', 1.2, 'DisplayName', 'Cleaned');
+hRaw1 = plot(t, out.x_raw, 'DisplayName', 'Raw'); hold on;
+hClean1 = plot(t, out.x_clean, 'LineWidth', 1.2, 'DisplayName', 'Cleaned');
 ylabel('Distance');
 title(sprintf('Trace: %s', traceLabel), 'Interpreter', 'none');
-legend('Location', 'best');
+legend([hRaw1, hClean1], {'Raw', 'Cleaned'}, 'Location', 'best');
 grid on;
 
 subplot(3,1,2);
 td = t(1:end-1);
-plot(td, out.d_raw, 'DisplayName', 'Raw diff'); hold on;
-plot(td, out.d_clean, 'LineWidth', 1.2, 'DisplayName', 'Clean diff');
+hDiffRaw = plot(td, out.d_raw, 'DisplayName', 'Raw diff'); hold on;
+hDiffClean = plot(td, out.d_clean, 'LineWidth', 1.2, 'DisplayName', 'Clean diff');
+
 if ~isempty(out.labelled_segments)
-    xline(td(out.labelled_segments), '--');
+    xl = xline(td(out.labelled_segments), '--');
+    for k = 1:numel(xl)
+        xl(k).HandleVisibility = 'off';   % hide vertical lines from legend
+    end
 end
+
 ylabel('\Deltax');
-legend('Location', 'best');
+legend([hDiffRaw, hDiffClean], {'Raw diff', 'Clean diff'}, 'Location', 'best');
 grid on;
 
 subplot(3,1,3);
 tdd = t(1:end-2);
-plot(tdd, out.dd_raw);
+plot(tdd, out.dd_raw, 'HandleVisibility', 'off');
 ylabel('\Delta^2x');
 xlabel('Time (s)');
 grid on;
